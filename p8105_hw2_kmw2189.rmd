@@ -5,8 +5,17 @@ date: "9/25/2019"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
+
+```{r}
+library(readxl)
+trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
+   janitor::clean_names() %>% 
+  
+  
+```
 
