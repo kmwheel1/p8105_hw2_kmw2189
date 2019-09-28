@@ -13,8 +13,13 @@ library(tidyverse)
 
 ```{r}
 library(readxl)
-trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
-   janitor::clean_names() %>% 
+trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", sheet = 1) %>%
+  janitor::clean_names() %>% 
+  rename(vol_y3 = volume_cubic_yards, cigs = cigarette_butts) %>% 
+  select(-x15) %>% 
+  drop_na(dumpster:date) %>% 
+  round(sports_balls, digits = 0) %>% 
+  as.integer(sports_balls)
   
   
 ```
