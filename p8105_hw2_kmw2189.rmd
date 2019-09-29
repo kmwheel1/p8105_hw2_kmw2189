@@ -18,9 +18,43 @@ trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
   rename(vol_y3 = volume_cubic_yards, cigs = cigarette_butts) %>% 
   select(-x15) %>% 
   drop_na(dumpster:date) %>%
-  mutate(sports_balls = round(sports_balls, 0))
- 
+  mutate(sports_balls = round(sports_balls, 0)) %>% 
+  mutate(sports_balls = as.integer(sports_balls))
+```
+
+Read and clean precipitation data for 2017 and 2018. For each, omit rows without precipitation data and add a variable year. Next, combine precipitation datasets and convert month to a character variable (the variable month.name is built into R and should be useful).
+```{r, cleaning 2017 precipitation}
+precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) %>% 
+  janitor::clean_names() %>% 
+  rename(total_in = total) %>% 
+    mutate(
+    total_in = na_if(total_in, 0),
+    year = "2017") %>% 
+  drop_na(total_in, month) %>% 
+  select(year, month, total_in)
+```
+
+```{r, cleaning 2018 precipitation}
+precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) %>% 
+  janitor::clean_names() %>% 
+  rename(total_in = total) %>% 
+  mutate(
+    total_in = na_if(total_in, 0),
+    year = "2018") %>% 
+   drop_na(total_in, month) %>% 
+  select(year, month, total_in)
+```
+
+```{r, joining 2017 and 2018 precipitation}
+joined_precip = bind_rows(year) 
+
+```
+
+
+
+
   
-  
+
+
 ```
 
