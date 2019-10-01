@@ -10,8 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
+# Problem 1
 
-```{r}
+## Importing and cleaning Mr. Trash Wheel Data
+```{r trash wheel import}
 library(readxl)
 trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
   janitor::clean_names() %>% 
@@ -22,7 +24,7 @@ trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
   mutate(sports_balls = as.integer(sports_balls))
 ```
 
-
+## Importing and cleaning 2017 precipitation data
 ```{r cleaning 2017 precipitation}
 precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) %>% 
   janitor::clean_names() %>% 
@@ -34,6 +36,7 @@ precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) 
   select(year, month, total_in)
 ```
 
+## Importing and cleaning 2018 precipitation data
 ```{r cleaning 2018 precipitation}
 precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) %>% 
   janitor::clean_names() %>% 
@@ -46,12 +49,28 @@ precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) 
 ```
 
 convert month to a character variable (the variable month.name is built into R and should be useful).
+
+## Joining 2017 and 2018 precipitation data
 ```{r binding 2017 & 2018 precip data}
-precip_bind = bind_rows(precip_2017, precip_2018) %>% 
-  mutate(
-    month = month.name,
-    as.character(month))
+precip_bind = bind_rows(precip_2017, precip_2018) 
+  ##mutate(
+    ##month = month.name,
+    ##as.character(month))
 ##error message: Error: Column `month` must be length 18 (the number of rows) or one, not 12
 
 ```
 
+```{r data summary work, include = FALSE}
+mean_trash_wheel = mean(pull(trash_wheel, weight_tons))
+mean_cubic_yars = mean(pull(trash_wheel, vol_y3))
+total_precip_17 = sum(pull(precip_2017, total_in))
+total_precip_18 = sum(pull(precip_2018, total_in))
+median_balls_17 = median(pull(trash_wheel, sports_balls), year = 2017)
+median_balls_18 = median(pull(trash_wheel, sports_balls), year = 2018)
+avg_balls_total = mean(pull(trash_wheel, sports_balls))
+```
+
+Mr. Trash Wheel is a trash interceptor that removes trash as it enters Baltimore's Inner Harbor. Between May 2014 and July 2018 Mr.Trash Wheel brought in a  total of `r nrow(trash_wheel)` dumpsters full of trash. The average dumpster weighed  `r round(mean_trash_wheel, digits = 2)` tons with a volume of `r round(mean_cubic_yars, digits = 2)` cubic yards. Trash collected in the dumpsters included cigarette butts, plastic bottles, sports balls, and grocery bags, among others. Mr. Trash Wheel is most active just after a precipitation event.  Between 2017 and 2018 there was a total of `r nrow(precip_bind)` months with precipitation. 2017 had higher total precipitation with  `r round(total_precip_17, digits = 2)` inches and 2018 had a total of  `r round(total_precip_18, digits = 2)` inches. The median number of sports balls collected per dumpster in 2017 was `r median_balls_17` and the 2018 median was also `r median_balls_18`.
+
+
+# Problem 2
