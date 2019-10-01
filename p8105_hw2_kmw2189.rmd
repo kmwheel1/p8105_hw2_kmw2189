@@ -48,15 +48,12 @@ precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) 
   select(year, month, total_in)
 ```
 
-convert month to a character variable (the variable month.name is built into R and should be useful).
 
 ## Joining 2017 and 2018 precipitation data
 ```{r binding 2017 & 2018 precip data}
-precip_bind = bind_rows(precip_2017, precip_2018) 
-  ##mutate(
-    ##month = month.name,
-    ##as.character(month))
-##error message: Error: Column `month` must be length 18 (the number of rows) or one, not 12
+precip_bind = bind_rows(precip_2017, precip_2018) %>% 
+  mutate(month = month.name[month])
+    
 
 ```
 
@@ -74,3 +71,46 @@ Mr. Trash Wheel is a trash interceptor that removes trash as it enters Baltimore
 
 
 # Problem 2
+
+
+```{r importing and cleaning pols_month data}
+pols_month = read_csv(file = "./data/pols_month.csv") %>% 
+  separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
+   mutate(
+    month = as.numeric(month),
+    month = month.name[month],
+    ##using an if else statement with prez_gop variable to create new president variable 
+    president = ifelse(prez_gop > 0, "gop", "dem")
+    ) %>%
+  select(-prez_dem, -prez_gop, -day)
+```
+
+
+```{r importing and cleaning snp data}
+snp_data = read_csv(file = "./data/snp.csv") %>% 
+  ##saving data as year, month, day, but it is written as month, day, year
+  mutate( 
+    date = as.Date(date)
+    )
+  ##separate(date, into = c("month", "day", "year"), sep = "/") 
+
+```
+
+
+Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+
+
+
+
+
+
+
+
+
+
+Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
+
+Join the datasets by merging snp into pols, and merging unemployment into the result.
+
+Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+
