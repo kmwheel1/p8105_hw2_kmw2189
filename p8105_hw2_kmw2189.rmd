@@ -22,8 +22,8 @@ trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
   mutate(sports_balls = as.integer(sports_balls))
 ```
 
-Read and clean precipitation data for 2017 and 2018. For each, omit rows without precipitation data and add a variable year. Next, combine precipitation datasets and convert month to a character variable (the variable month.name is built into R and should be useful).
-```{r, cleaning 2017 precipitation}
+
+```{r cleaning 2017 precipitation}
 precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) %>% 
   janitor::clean_names() %>% 
   rename(total_in = total) %>% 
@@ -34,7 +34,7 @@ precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) 
   select(year, month, total_in)
 ```
 
-```{r, cleaning 2018 precipitation}
+```{r cleaning 2018 precipitation}
 precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) %>% 
   janitor::clean_names() %>% 
   rename(total_in = total) %>% 
@@ -45,16 +45,13 @@ precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) 
   select(year, month, total_in)
 ```
 
-```{r, joining 2017 and 2018 precipitation}
-joined_precip = bind_rows(year) 
-
-```
-
-
-
-
-  
-
+convert month to a character variable (the variable month.name is built into R and should be useful).
+```{r binding 2017 & 2018 precip data}
+precip_bind = bind_rows(precip_2017, precip_2018) %>% 
+  mutate(
+    month = month.name,
+    as.character(month))
+##error message: Error: Column `month` must be length 18 (the number of rows) or one, not 12
 
 ```
 
