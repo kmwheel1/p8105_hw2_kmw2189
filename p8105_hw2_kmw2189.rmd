@@ -78,11 +78,11 @@ pols_month = read_csv(file = "./data/pols_month.csv") %>%
   ## separating month from 1 column into 3
   separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
    mutate(
-    ## mutate month into numeric in order to use the month.abb var
+    ## mutate month into numeric in order to use the month.name var
     month = as.numeric(month),
-    month = month.abb[month],
+    month = month.name[month],
     ## converting year to integer to keep consistent in merge
-    year = as.integer(year) 
+    year = as.integer(year),
     president = ifelse(prez_gop > 0, "gop", "dem")
     ) %>%
   select(-prez_dem, -prez_gop, -day) %>% 
@@ -99,7 +99,8 @@ snp_data = read_csv(file = "./data/snp.csv") %>%
   separate(date, into = c("year", "month", "day"), sep = "-") %>% 
   mutate(
     month = as.numeric(month),
-    month = month.abb[month]
+    month = month.name[month], 
+    year = as.integer(year),
   ) %>% 
   select(-day) %>% 
   arrange(year, month, desc(year))
@@ -115,12 +116,10 @@ unemploy_data = read_csv(file = "./data/unemployment.csv") %>%
     names_to = "month", 
     values_to = "unemploy_pct"
     ) %>%
-  ## convert year and month to a character, so it matches the variable type of month in pols and snp data
   mutate(
-    year = as.character(year),
-    month = as.character(month)
+    year = as.integer(year),
+    month = recode(month, "jan" = "January", "feb" = "February", "mar" = "March", "apr" = "April", "may" = "May", "jun" = "June", "jul" = "July", "aug" = "August", "sep" = "September", "oct" = "October", "nov" = "November", "dec" = "December")
   ) %>% 
-  ## arrange so the dataset leads with year and month by descending years, so it matches the formatting of the pols and snp data
   arrange(year, month, desc(year))
 
 ```
@@ -137,9 +136,23 @@ pols_snp_unemploy_data =
   left_join(pols_month_snp_data, unemploy_data, by = c("year", "month"))
 ```
 
-use drop 1 to drop header. 
-
-Join the datasets by merging snp into pols, and merging unemployment into the result.
-
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
+The data contained in Problem 2 summarizes the politicial parties in the house, senate, and president monthly starting in ##r min(pull, `.
+
+# Problem 3
+
+use drop 1 to drop header. 
+```{r, uploading dataset for problem 3}
+baby_names = read_csv(file = "./data/popular_baby_names.csv") %>%
+  janitor::clean_names() %>%
+  rename(year = year_of_birth , name = childs_first_name) %>% 
+  mutate(
+    ethnicity = recode("ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER", "BLACK NON HISP" = "BLACK NON HISPANIC", "WHITE NON HISP" = "WHITE NON HISPANIC"
+  )
+  
+
+```
+
+the names of a categorical predictor and the case structure of string variables changed over time; you’ll need to address this in your data cleaning. 
+Also, some rows seem duplicated, and these will need to be removed (hint: google something like “dplyr remove duplicate rows” to get started).
