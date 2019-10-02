@@ -12,7 +12,7 @@ library(tidyverse)
 
 # Problem 1
 
-## Importing and cleaning Mr. Trash Wheel Data
+## Importing and tidying Mr. Trash Wheel Data
 ```{r trash wheel import}
 library(readxl)
 trash_wheel = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 1) %>%
@@ -24,7 +24,7 @@ trash_wheel = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 1) %>%
   mutate(sports_balls = as.integer(sports_balls))
 ```
 
-## Importing and cleaning 2017 precipitation data
+## Importing and tidying 2017 precipitation data
 ```{r cleaning 2017 precipitation}
 precip_2017 = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 6, skip = 1) %>% 
   janitor::clean_names() %>% 
@@ -36,7 +36,7 @@ precip_2017 = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 6, skip
   select(year, month, total_in)
 ```
 
-## Importing and cleaning 2018 precipitation data
+## Importing and tidying 2018 precipitation data
 ```{r cleaning 2018 precipitation}
 precip_2018 = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 5, skip = 1) %>% 
   janitor::clean_names() %>% 
@@ -47,7 +47,6 @@ precip_2018 = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 5, skip
    drop_na(total_in, month) %>% 
   select(year, month, total_in)
 ```
-
 
 ## Joining 2017 and 2018 precipitation data
 ```{r binding 2017 & 2018 precip data}
@@ -72,43 +71,59 @@ Mr. Trash Wheel is a trash interceptor that removes trash as it enters Baltimore
 
 # Problem 2
 
-
-```{r importing and cleaning pols_month data}
+## Importing and tidying the monthly poll data
+```{r importing and tidying pols_month data}
 pols_month = read_csv(file = "./data/pols_month.csv") %>% 
   separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
    mutate(
     month = as.numeric(month),
-    month = month.name[month],
+    month = month.abb[month],
     ##using an if else statement with prez_gop variable to create new president variable 
     president = ifelse(prez_gop > 0, "gop", "dem")
     ) %>%
-  select(-prez_dem, -prez_gop, -day)
+  select(-prez_dem, -prez_gop, -day) %>% 
+  arrange(year, month, desc(year))
+
 ```
 
-
-```{r importing and cleaning snp data}
+## Importing and tidying the S&P data
+```{r importing and tidying snp data}
 snp_data = read_csv(file = "./data/snp.csv") %>% 
-  ##saving data as year, month, day, but it is written as month, day, year
   mutate( 
-    date = as.Date(date)
-    )
-  ##separate(date, into = c("month", "day", "year"), sep = "/") 
+    date = lubridate::mdy(date)
+    ) %>% 
+  separate(date, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(
+    month = as.numeric(month),
+    month = month.abb[month]
+  ) %>% 
+  select(-day) %>% 
+  arrange(year, month, desc(year))
+  
+```
+
+## Importing and tidying unemployment dataset
+```{r importing and tidying unelmployment data}
+unemploy_data = read_csv(file = "./data/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    jan:dec,
+    names_to = "month", 
+    values_to = "unemploy_pct"
+    ) %>%
+  arrange(year, month, desc(year))
 
 ```
 
 
-Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+## Merging 
+```{r}
+## snp_data into pols_month data 
+pols_month_snp_data = 
+  left_join(pols_month, snp_data, by = c("year", "month"))
+```
 
 
-
-
-
-
-
-
-
-
-Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
 
 Join the datasets by merging snp into pols, and merging unemployment into the result.
 
