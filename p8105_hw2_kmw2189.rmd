@@ -15,7 +15,7 @@ library(tidyverse)
 ## Importing and cleaning Mr. Trash Wheel Data
 ```{r trash wheel import}
 library(readxl)
-trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
+trash_wheel = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 1) %>%
   janitor::clean_names() %>% 
   rename(vol_y3 = volume_cubic_yards, cigs = cigarette_butts) %>% 
   select(-x15) %>% 
@@ -26,7 +26,7 @@ trash_wheel = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 1) %>%
 
 ## Importing and cleaning 2017 precipitation data
 ```{r cleaning 2017 precipitation}
-precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) %>% 
+precip_2017 = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 6, skip = 1) %>% 
   janitor::clean_names() %>% 
   rename(total_in = total) %>% 
     mutate(
@@ -38,7 +38,7 @@ precip_2017 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 4, skip = 1) 
 
 ## Importing and cleaning 2018 precipitation data
 ```{r cleaning 2018 precipitation}
-precip_2018 = read_excel(path = "./data/mr_trash_wheel_data.xlsx", 3, skip = 1) %>% 
+precip_2018 = read_excel(path = "./data/mr_trash_wheel_data_aug19.xlsx", 5, skip = 1) %>% 
   janitor::clean_names() %>% 
   rename(total_in = total) %>% 
   mutate(
@@ -67,7 +67,7 @@ median_balls_18 = median(pull(trash_wheel, sports_balls), year = 2018)
 avg_balls_total = mean(pull(trash_wheel, sports_balls))
 ```
 
-Mr. Trash Wheel is a trash interceptor that removes trash as it enters Baltimore's Inner Harbor. Between May 2014 and July 2018 Mr.Trash Wheel brought in a  total of `r nrow(trash_wheel)` dumpsters full of trash. The average dumpster weighed  `r round(mean_trash_wheel, digits = 2)` tons with a volume of `r round(mean_cubic_yars, digits = 2)` cubic yards. Trash collected in the dumpsters included cigarette butts, plastic bottles, sports balls, and grocery bags, among others. Mr. Trash Wheel is most active just after a precipitation event.  Between 2017 and 2018 there was a total of `r nrow(precip_bind)` months with precipitation. 2017 had higher total precipitation with  `r round(total_precip_17, digits = 2)` inches and 2018 had a total of  `r round(total_precip_18, digits = 2)` inches. The median number of sports balls collected per dumpster in 2017 was `r median_balls_17` and the 2018 median was also `r median_balls_18`.
+Mr. Trash Wheel is a trash interceptor that removes trash as it enters Baltimore's Inner Harbor. Between May 2014 and August 2019 Mr.Trash Wheel brought in a  total of `r nrow(trash_wheel)` dumpsters full of trash. The average dumpster weighed  `r round(mean_trash_wheel, digits = 2)` tons with a volume of `r round(mean_cubic_yars, digits = 2)` cubic yards. Trash collected in the dumpsters included cigarette butts, plastic bottles, sports balls, and grocery bags, among others. Mr. Trash Wheel is most active just after a precipitation event.  Between 2017 and 2018 there was a total of `r nrow(precip_bind)` months with precipitation. 2017 had lower total precipitation with  `r round(total_precip_17, digits = 2)` inches compared to a total of `r round(total_precip_18, digits = 2)` inches in 2018. The median number of sports balls collected per dumpster in 2017 was `r median_balls_17` and the 2018 median was also `r median_balls_18`.
 
 
 # Problem 2
