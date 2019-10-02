@@ -111,6 +111,12 @@ unemploy_data = read_csv(file = "./data/unemployment.csv") %>%
     names_to = "month", 
     values_to = "unemploy_pct"
     ) %>%
+  ## convert year and month to a character, so it matches the variable type of month in pols and snp data
+  mutate(
+    year = as.character(year),
+    month = as.character(month)
+  ) %>% 
+  ## arrange so the dataset leads with year and month by descending years, so it matches the formatting of the pols and snp data
   arrange(year, month, desc(year))
 
 ```
@@ -121,9 +127,13 @@ unemploy_data = read_csv(file = "./data/unemployment.csv") %>%
 ## snp_data into pols_month data 
 pols_month_snp_data = 
   left_join(pols_month, snp_data, by = c("year", "month"))
+
+## unemploy_data into pols_month and snp combined
+pols_snp_unemploy_data =
+  left_join(pols_month_snp_data, unemploy_data, by = c("year", "month"))
 ```
 
-
+use drop 1 to drop header. 
 
 Join the datasets by merging snp into pols, and merging unemployment into the result.
 
