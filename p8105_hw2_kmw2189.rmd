@@ -142,17 +142,42 @@ The data contained in Problem 2 summarizes the politicial parties in the house, 
 
 # Problem 3
 
-use drop 1 to drop header. 
-```{r, uploading dataset for problem 3}
-baby_names = read_csv(file = "./data/popular_baby_names.csv") %>%
+## Importing and tidying baby names data
+```{r, importing and tidying baby_names data}
+baby_names = read_csv(file = "./data/popular_baby_names.csv") %>% 
   janitor::clean_names() %>%
   rename(year = year_of_birth , name = childs_first_name) %>% 
   mutate(
-    ethnicity = recode("ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER", "BLACK NON HISP" = "BLACK NON HISPANIC", "WHITE NON HISP" = "WHITE NON HISPANIC"
-  )
+    year = as.numeric(year),
+    ethnicity = recode(ethnicity,"ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER", "BLACK NON HISP" = "BLACK NON HISPANIC", "WHITE NON HISP" = "WHITE NON HISPANIC"
+  )) %>% 
+  distinct() %>% 
+  select(-count) %>%
+  pivot_wider(
+  names_from = "year", 
+  values_from = "rank") 
   
+```
+
+## Creating popular name tables
+```{r popular name tables}
+
+##Creating Olivia table
+Olivia_name = baby_names %>% 
+  filter(name == "Olivia")  
+   
+knitr::kable(Olivia_name,
+      caption = "Rank of Female Children in NYC Named Olivia")
+ 
+##Creating Ethan table
+Ethan_name = baby_names %>% 
+  filter(name == "Ethan")
+
+knitr::kable(Ethan_name,
+      caption = "Rank of Male Children in NYC Named Ethan")
 
 ```
 
-the names of a categorical predictor and the case structure of string variables changed over time; you’ll need to address this in your data cleaning. 
-Also, some rows seem duplicated, and these will need to be removed (hint: google something like “dplyr remove duplicate rows” to get started).
+Finally, for male, white non-hispanic children born in 2016, produce a scatter plot showing the number of children with a name (y axis) against the rank in popularity of that name (x axis).
+
+Optional post-assignment survey
