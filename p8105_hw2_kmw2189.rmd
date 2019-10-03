@@ -153,7 +153,7 @@ baby_names = read_csv(file = "./data/popular_baby_names.csv") %>%
     name = as.factor(toupper(name))
     ) %>% 
   distinct() %>% 
-  select(year, name, rank, gender, ethnicity)
+  select(year, name, rank, gender, ethnicity, count)
   
 
 ```
@@ -184,4 +184,11 @@ baby_names %>%
 ```
 
 
-Finally, for male, white non-hispanic children born in 2016, produce a scatter plot showing the number of children with a name (y axis) against the rank in popularity of that name (x axis).
+## Scatterplot of count and rank of popular baby names for Non Hispanic While Males born in 2016 in NYC
+```{r scatterplot}
+baby_names %>% 
+  filter(gender == "MALE", ethnicity == "WHITE NON HISPANIC", year == 2016) %>% 
+  ggplot(aes(x = rank, y = count)) + geom_point()
+
+```
+
