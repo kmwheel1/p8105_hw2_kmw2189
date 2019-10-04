@@ -126,6 +126,7 @@ unemploy_data = read_csv(file = "./data/unemployment.csv") %>%
     year = as.integer(year),
     month = recode(month, "jan" = "January", "feb" = "February", "mar" = "March", "apr" = "April", "may" = "May", "jun" = "June", "jul" = "July", "aug" = "August", "sep" = "September", "oct" = "October", "nov" = "November", "dec" = "December")
   ) %>% 
+  drop_na(unemploy_pct) %>%
   arrange(year, month, desc(year))
 
 ```
@@ -148,19 +149,17 @@ mean_close = mean(pull(snp_data, close))
 snp_max = max(pull(snp_data, close))
 snp_min = min(pull(snp_data, close))
 
-mean_unemploy = mean(pull(unemploy_data, unemploy_pct))
-min_unemploy = min(pull(unemploy_data, unemploy_pct))
-max_unemploy = max(pull(unemploy_data, unemploy_pct))
-
-
 ```
 
 
+The data in Problem 2 summarizes the seats held by each U.S political party, the S&P stock growth, and the U.S. unemployment rate over time. 
 
-The data contained in Problem 2 summarizes the seats held by each U.S political party, the S&P stock growth, and the U.S. unemployment rate over time. 
 The monthly poll data contains the politicial parties of the house, senate, and president for each month from `r min(pull(pols_month, year))` to `r max(pull(pols_month, year))` for a total of `r nrow(pols_month)` months of data. 
-The S&P stock dataset shows that the average close was `r round(mean_close, digits = 2)` points with a high of `r round(snp_max, digits = 2)` and a low of `r round(snp_min, digits = 2)`.
-The unemployment dataset shows the unemployment rate of the U.S per month. The maximum unemployment rate was `r max(pull(unemploy_data, unemploy_pct))`
+
+The S&P stock dataset shows the average S&P close was `r round(mean_close, digits = 2)` points with a high of `r round(snp_max, digits = 2)` in May 2015 and a low of `r round(snp_min, digits = 2)` in January 1950, the last and first months of the data, respectively.
+
+The unemployment dataset shows the unemployment rate of the U.S per month. The maximum unemployment rate was `r max(pull(unemploy_data, unemploy_pct))` percent and the minimum unemployment rate was `r min(pull(unemploy_data, unemploy_pct))`. For 2010, the middle of the last recession, the average unemployment rate was `r mean(pull(unemploy_data, unemploy_pct), year = 2010)` percent. 
+
 
 # Problem 3
 
